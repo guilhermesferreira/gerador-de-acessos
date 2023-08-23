@@ -1,5 +1,6 @@
 import random  # Importa o módulo random para gerar números aleatórios
 from unidecode import unidecode  # Importa a função unidecode do módulo unidecode para remover acentos
+import gc  # Importar o módulo gc para realizar a coleta de lixo
 
 # Função para carregar dados de um arquivo e retornar uma lista de strings
 def load_data_from_file(filename):
@@ -43,22 +44,26 @@ def generate_test_data_batch(names, passwords, batch_size):
             
     return test_data
 
-def generate_test_data(num_combinations=100, batch_size=500000):
+def generate_test_data(num_combinations=100, batch_size=1000000):
     passwords = load_data_from_file("senhas.txt")
     names = load_data_from_file("nomes.txt")
-    test_data = []
     
-    for batch_num in range(num_combinations // batch_size):
-        print(f"Gerando e salvando dados {batch_num + 1}/{num_combinations // batch_size}")
-        batch_data = generate_test_data_batch(names, passwords, batch_size)
-        test_data.extend(batch_data)
+    with open("base_teste.txt", "w", encoding="utf-8") as f:
+        for batch_num in range(num_combinations // batch_size):
+            print(f"Gerando e salvando dados {batch_num + 1}/{num_combinations // batch_size}")
+            batch_data = generate_test_data_batch(names, passwords, batch_size)
+            for item in batch_data:
+                f.write("%s\n" % item)
+            import gc
+            gc.collect()
         
-    remaining_data = generate_test_data_batch(names, passwords, num_combinations % batch_size)
-    test_data.extend(remaining_data)
+        remaining_data = generate_test_data_batch(names, passwords, num_combinations % batch_size)
+        for item in remaining_data:
+            f.write("%s\n" % item)
     
-    return test_data
+    print(f"Base de dados de teste gerada com {num_combinations * 2} combinações.")
 
-
+    
 # Função para remover duplicados de um arquivo
 def remove_duplicates(filename):
     data = load_data_from_file(filename)  # Carrega dados do arquivo
@@ -86,7 +91,6 @@ def main_menu():
     if choice == "1":
         num_combinations = int(input("Digite o número de combinações desejado: "))
         test_data = generate_test_data(num_combinations)
-        save_data_to_file(test_data, "base_teste.txt")
         print(f"Base de dados de teste gerada com {num_combinations * 2} combinações.")
     elif choice == "2":
         users_data = load_data_from_file("nomes.txt")

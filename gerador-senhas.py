@@ -47,8 +47,30 @@ def save_to_file(test_data, filename="base_teste.txt"):
         for item in test_data:
             f.write("%s\n" % item)
 
-# Personalize as opções aqui
-num_combinations = 10000000
-test_data = generate_test_data(num_combinations)
-save_to_file(test_data)
-print(f"Base de dados de teste gerada com {num_combinations * 2} combinações.")
+def check_duplicates(filename="base_teste.txt"):
+    with open(filename, "r", encoding="utf-8") as f:
+        lines = f.readlines()
+    unique_lines = set(lines)
+    if len(unique_lines) != len(lines):
+        print("O arquivo contém itens duplicados.")
+    else:
+        print("O arquivo não contém itens duplicados.")
+
+def main_menu():
+    print("1. Gerar lista de dados de teste")
+    print("2. Verificar se o arquivo base contém itens duplicados")
+    
+    choice = input("Escolha uma opção: ")
+    
+    if choice == "1":
+        num_combinations = int(input("Digite o número de combinações desejado: "))
+        test_data = generate_test_data(num_combinations)
+        save_to_file(test_data)
+        print(f"Base de dados de teste gerada com {num_combinations * 2} combinações.")
+    elif choice == "2":
+        check_duplicates()
+    else:
+        print("Opção inválida.")
+
+if __name__ == "__main__":
+    main_menu()

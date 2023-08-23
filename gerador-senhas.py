@@ -22,25 +22,32 @@ def generate_test_data_batch(names, passwords, batch_size):
     test_data = []
     for _ in range(batch_size):
         full_name = random.choice(names)
-        full_name = remove_accents(full_name)  # Remove acentos
-        if " " in full_name:
-            first_name, last_name = full_name.split(" ", 1)
-            email_base = [
-                full_name.replace(" ", "").lower(),
-                f"{first_name.lower()}.{last_name.lower()}",
-                f"{first_name.lower()}_{last_name.lower()}",
-            ]
+        full_name = remove_accents(full_name)
+        
+        if "@" in full_name:
+            # Se o nome já contém um "@" (possivelmente um email), adicionamos apenas a senha
+            password = random.choice(passwords)
+            test_data.append(f"{full_name}:{password}")
         else:
-            first_name = full_name
-            email_base = [full_name.lower()]
-        
-        password = random.choice(passwords)
-        
-        for email in email_base:
-            email_hotmail = f"{email}@hotmail.com"
-            email_gmail = f"{email}@gmail.com"
-            test_data.append(f"{email_hotmail}:{password}")
-            test_data.append(f"{email_gmail}:{password}")
+            if " " in full_name:
+                first_name, last_name = full_name.split(" ", 1)
+                email_base = [
+                    full_name.replace(" ", "").lower(),
+                    f"{first_name.lower()}.{last_name.lower()}",
+                    f"{first_name.lower()}_{last_name.lower()}",
+                ]
+            else:
+                first_name = full_name
+                email_base = [full_name.lower()]
+
+            password = random.choice(passwords)
+
+            for email in email_base:
+                email_hotmail = f"{email}@hotmail.com"
+                email_gmail = f"{email}@gmail.com"
+                test_data.append(f"{email_hotmail}:{password}")
+                test_data.append(f"{email_gmail}:{password}")
+                test_data.append(f"{email.split('@')[0]}:{password}")
             
     return test_data
 

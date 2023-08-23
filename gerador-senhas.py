@@ -1,24 +1,25 @@
-import random
-from unidecode import unidecode
+import random  # Importa o módulo random para gerar números aleatórios
+from unidecode import unidecode  # Importa a função unidecode do módulo unidecode para remover acentos
 
+# Função para carregar dados de um arquivo e retornar uma lista de strings
 def load_data_from_file(filename):
     with open(filename, "r", encoding="utf-8") as f:
-        data = [line.strip() for line in f]
+        data = [line.strip() for line in f]  # Lê cada linha do arquivo, remove espaços extras e adiciona à lista
     return data
 
+# Função para salvar dados em um arquivo
 def save_data_to_file(data, filename):
     with open(filename, "w", encoding="utf-8") as f:
         for item in data:
-            f.write("%s\n" % item)
+            f.write("%s\n" % item)  # Escreve cada item da lista no arquivo, seguido de uma nova linha
 
+# Função para remover acentos de um texto usando a função unidecode
 def remove_accents(text):
     return unidecode(text)
 
-def generate_test_data(num_combinations=100):
-    passwords = load_data_from_file("senhas.txt")
-    names = load_data_from_file("nomes.txt")
+def generate_test_data_batch(names, passwords, batch_size):
     test_data = []
-    for _ in range(num_combinations):
+    for _ in range(batch_size):
         full_name = random.choice(names)
         full_name = remove_accents(full_name)  # Remove acentos
         if " " in full_name:
@@ -42,12 +43,29 @@ def generate_test_data(num_combinations=100):
             
     return test_data
 
+def generate_test_data(num_combinations=100, batch_size=500000):
+    passwords = load_data_from_file("senhas.txt")
+    names = load_data_from_file("nomes.txt")
+    test_data = []
+    
+    for batch_num in range(num_combinations // batch_size):
+        print(f"Gerando e salvando dados {batch_num + 1}/{num_combinations // batch_size}")
+        batch_data = generate_test_data_batch(names, passwords, batch_size)
+        test_data.extend(batch_data)
+        
+    remaining_data = generate_test_data_batch(names, passwords, num_combinations % batch_size)
+    test_data.extend(remaining_data)
+    
+    return test_data
+
+
+# Função para remover duplicados de um arquivo
 def remove_duplicates(filename):
-    data = load_data_from_file(filename)
-    initial_lines = len(data)
-    unique_data = list(set(data))
-    num_duplicates = initial_lines - len(unique_data)
-    save_data_to_file(unique_data, filename) 
+    data = load_data_from_file(filename)  # Carrega dados do arquivo
+    initial_lines = len(data)  # Número de linhas inicial
+    unique_data = list(set(data))  # Remove duplicados usando um conjunto
+    num_duplicates = initial_lines - len(unique_data)  # Calcula o número de duplicados
+    save_data_to_file(unique_data, filename)  # Salva os dados únicos no arquivo
     
     print("Informações sobre a remoção de duplicados:")
     print(f"Arquivo: {filename}")
@@ -56,7 +74,7 @@ def remove_duplicates(filename):
     print(f"Quantidade de linhas removidas: {num_duplicates}")
     print(f"Nova quantidade de linhas: {len(unique_data)}")
 
-
+# Função para mostrar um menu e executar ações com base nas opções escolhidas
 def main_menu():
     print("1. Gerar lista de dados de teste")
     print("2. Verificar e remover duplicados da lista de usuários")
@@ -80,8 +98,10 @@ def main_menu():
         print("Duplicados removidos da lista de senhas com sucesso.")
     elif choice == "4":
         remove_duplicates("base_teste.txt")
+        print("Duplicados removidos do arquivo base com sucesso.")
     else:
         print("Opção inválida.")
 
+# Executa o menu principal quando o script é executado
 if __name__ == "__main__":
     main_menu()

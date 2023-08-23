@@ -48,10 +48,6 @@ def generate_test_data_batch(names, passwords, batch_size):
                 test_data.append(f"{email_hotmail}:{password}")
                 test_data.append(f"{email_gmail}:{password}")
                 test_data.append(f"{email.split('@')[0]}:{password}")
-                 # Adicione esta linha para garantir que cada linha tenha apenas um ":" entre o nome e a senha
-                user_data = f"{full_name.replace(':', '')}:{password.replace(':', '')}"
-                user_data = user_data.replace(':', '')  # Remove quaisquer outros ":" que possam ter sido introduzidos
-                test_data.append(user_data)
             
     return test_data
 
@@ -65,6 +61,7 @@ def generate_test_data(num_combinations=100, batch_size=1000000):
             batch_data = generate_test_data_batch(names, passwords, batch_size)
             for item in batch_data:
                 f.write("%s\n" % item)
+            
             import gc
             gc.collect()
         
@@ -73,6 +70,7 @@ def generate_test_data(num_combinations=100, batch_size=1000000):
             f.write("%s\n" % item)
     
     print(f"Base de dados de teste gerada com {num_combinations * 2} combinações.")
+
 
     
 # Função para remover duplicados de um arquivo

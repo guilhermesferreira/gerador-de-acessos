@@ -4,12 +4,12 @@ import gc  # Importar o módulo gc para realizar a coleta de lixo
 
 # Função para carregar dados de um arquivo e retornar uma lista de strings
 def load_data_from_file(filename):
-    data = []  # Cria uma lista vazia para armazenar os dados do arquivo
-    with open(filename, 'r', encoding='utf-8') as file:  # Abre o arquivo no modo de leitura
-        for line in file:  # Percorre cada linha no arquivo
+    data = []
+    with open(filename, 'r', encoding='utf-8') as file:
+        for line in file:  
             if ':' not in line:  # Verifica se a linha não contém dois pontos
-                data.append(line.strip())  # Adiciona a linha (sem espaços extras) à lista de dados
-    return data  # Retorna a lista de dados
+                data.append(line.strip())
+    return data 
 
 # Função para salvar dados em um arquivo
 def save_data_to_file(data, filename):

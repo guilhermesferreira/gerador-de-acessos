@@ -5,7 +5,7 @@ import gc  # Importar o módulo gc para realizar a coleta de lixo
 # Função para carregar dados de um arquivo e retornar uma lista de strings
 def load_data_from_file(filename):
     with open(filename, "r", encoding="utf-8") as f:
-        data = [line.strip() for line in f]  # Lê cada linha do arquivo, remove espaços extras e adiciona à lista
+        data = [line.strip().replace(":","") for line in f]  # Lê cada linha do arquivo, remove espaços extras e adiciona à lista
     return data
 
 # Função para salvar dados em um arquivo
@@ -48,6 +48,10 @@ def generate_test_data_batch(names, passwords, batch_size):
                 test_data.append(f"{email_hotmail}:{password}")
                 test_data.append(f"{email_gmail}:{password}")
                 test_data.append(f"{email.split('@')[0]}:{password}")
+                 # Adicione esta linha para garantir que cada linha tenha apenas um ":" entre o nome e a senha
+                user_data = f"{full_name.replace(':', '')}:{password.replace(':', '')}"
+                user_data = user_data.replace(':', '')  # Remove quaisquer outros ":" que possam ter sido introduzidos
+                test_data.append(user_data)
             
     return test_data
 

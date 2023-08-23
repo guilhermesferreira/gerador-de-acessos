@@ -88,12 +88,37 @@ def remove_duplicates(filename):
     print(f"Quantidade de linhas removidas: {num_duplicates}")
     print(f"Nova quantidade de linhas: {len(unique_data)}")
 
+
+def separate_base_by_format(filename):
+    user_pass_data = []
+    mail_pass_data = []
+
+    with open(filename, "r", encoding="utf-8") as f:
+        for line in f:
+            line = line.strip()
+            if ":" in line:
+                parts = line.split(":")
+                if "@" in parts[0]:  # Check if it's an email-based entry
+                    mail_pass_data.append(line)
+                else:
+                    user_pass_data.append(line)
+
+    with open("user_pass_base.txt", "w", encoding="utf-8") as user_pass_file:
+        user_pass_file.write('\n'.join(user_pass_data))
+
+    with open("mail_pass_base.txt", "w", encoding="utf-8") as mail_pass_file:
+        mail_pass_file.write('\n'.join(mail_pass_data))
+
+    print("Base separada em 'user:pass' e 'mail:pass' com sucesso.")
+    
+
 # Função para mostrar um menu e executar ações com base nas opções escolhidas
 def main_menu():
     print("1. Gerar lista de dados de teste")
     print("2. Verificar e remover duplicados da lista de usuários")
     print("3. Verificar e remover duplicados da lista de senhas")
     print("4. Verificar e remover duplicados do arquivo base")
+    print("5. Separar a base por tipo de login")
     
     choice = input("Escolha uma opção: ")
     
@@ -112,6 +137,8 @@ def main_menu():
     elif choice == "4":
         remove_duplicates("base_teste.txt")
         print("Duplicados removidos do arquivo base com sucesso.")
+    elif choice == "5":
+        separate_base_by_format("base_teste.txt")
     else:
         print("Opção inválida.")
 

@@ -5,6 +5,8 @@ __pycache__/
 
 # C extensions
 *.so
+#Base
+base_teste.txt
 
 # Distribution / packaging
 .Python

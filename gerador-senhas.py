@@ -1,22 +1,22 @@
 import random
 from unidecode import unidecode
 
-def load_passwords_from_file(filename):
+def load_data_from_file(filename):
     with open(filename, "r", encoding="utf-8") as f:
-        passwords = [line.strip() for line in f]
-    return passwords
+        data = [line.strip() for line in f]
+    return data
 
-def load_names_from_file(filename):
-    with open(filename, "r", encoding="utf-8") as f:
-        names = [line.strip() for line in f]
-    return names
+def save_data_to_file(data, filename):
+    with open(filename, "w", encoding="utf-8") as f:
+        for item in data:
+            f.write("%s\n" % item)
 
 def remove_accents(text):
     return unidecode(text)
 
 def generate_test_data(num_combinations=100):
-    passwords = load_passwords_from_file("senhas.txt")
-    names = load_names_from_file("nomes.txt")
+    passwords = load_data_from_file("senhas.txt")
+    names = load_data_from_file("nomes.txt")
     test_data = []
     for _ in range(num_combinations):
         full_name = random.choice(names)
@@ -42,42 +42,44 @@ def generate_test_data(num_combinations=100):
             
     return test_data
 
-def save_to_file(test_data, filename="base_teste.txt"):
-    with open(filename, "a", encoding="utf-8") as f:
-        for item in test_data:
-            f.write("%s\n" % item)
+def remove_duplicates(filename):
+    data = load_data_from_file(filename)
+    initial_lines = len(data)
+    unique_data = list(set(data))
+    num_duplicates = initial_lines - len(unique_data)
+    save_data_to_file(unique_data, filename) 
+    
+    print("Informações sobre a remoção de duplicados:")
+    print(f"Arquivo: {filename}")
+    print(f"Quantidade inicial de linhas: {initial_lines}")
+    print(f"Quantidade de linhas duplicadas: {num_duplicates}")
+    print(f"Quantidade de linhas removidas: {num_duplicates}")
+    print(f"Nova quantidade de linhas: {len(unique_data)}")
 
-def check_duplicates(filename="base_teste.txt"):
-    with open(filename, "r", encoding="utf-8") as f:
-        lines = f.readlines()
-    
-    unique_lines = set(lines)
-    num_total_lines = len(lines)
-    num_unique_lines = len(unique_lines)
-    num_duplicates = num_total_lines - num_unique_lines
-    
-    print(f"Número total de linhas: {num_total_lines}")
-    print(f"Número de linhas duplicadas: {num_duplicates}")
-    
-    with open(filename, "w", encoding="utf-8") as f:
-        for line in unique_lines:
-            f.write(line)
 
 def main_menu():
     print("1. Gerar lista de dados de teste")
-    print("2. Verificar e remover duplicados do arquivo base")
+    print("2. Verificar e remover duplicados da lista de usuários")
+    print("3. Verificar e remover duplicados da lista de senhas")
+    print("4. Verificar e remover duplicados do arquivo base")
     
     choice = input("Escolha uma opção: ")
     
     if choice == "1":
         num_combinations = int(input("Digite o número de combinações desejado: "))
         test_data = generate_test_data(num_combinations)
-        save_to_file(test_data)
+        save_data_to_file(test_data, "base_teste.txt")
         print(f"Base de dados de teste gerada com {num_combinations * 2} combinações.")
-        print(f"{num_combinations} Combinações hotmail e {num_combinations} com gmail.")
     elif choice == "2":
-        check_duplicates()
-        print("Duplicados removidos com sucesso.")
+        users_data = load_data_from_file("nomes.txt")
+        remove_duplicates("nomes.txt")
+        print("Duplicados removidos da lista de usuários com sucesso.")
+    elif choice == "3":
+        passwords_data = load_data_from_file("senhas.txt")
+        remove_duplicates("senhas.txt")
+        print("Duplicados removidos da lista de senhas com sucesso.")
+    elif choice == "4":
+        remove_duplicates("base_teste.txt")
     else:
         print("Opção inválida.")
 

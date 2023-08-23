@@ -50,15 +50,22 @@ def save_to_file(test_data, filename="base_teste.txt"):
 def check_duplicates(filename="base_teste.txt"):
     with open(filename, "r", encoding="utf-8") as f:
         lines = f.readlines()
+    
     unique_lines = set(lines)
-    if len(unique_lines) != len(lines):
-        print("O arquivo contém itens duplicados.")
-    else:
-        print("O arquivo não contém itens duplicados.")
+    num_total_lines = len(lines)
+    num_unique_lines = len(unique_lines)
+    num_duplicates = num_total_lines - num_unique_lines
+    
+    print(f"Número total de linhas: {num_total_lines}")
+    print(f"Número de linhas duplicadas: {num_duplicates}")
+    
+    with open(filename, "w", encoding="utf-8") as f:
+        for line in unique_lines:
+            f.write(line)
 
 def main_menu():
     print("1. Gerar lista de dados de teste")
-    print("2. Verificar se o arquivo base contém itens duplicados")
+    print("2. Verificar e remover duplicados do arquivo base")
     
     choice = input("Escolha uma opção: ")
     
@@ -67,8 +74,10 @@ def main_menu():
         test_data = generate_test_data(num_combinations)
         save_to_file(test_data)
         print(f"Base de dados de teste gerada com {num_combinations * 2} combinações.")
+        print(f"{num_combinations} Combinações hotmail e {num_combinations} com gmail.")
     elif choice == "2":
         check_duplicates()
+        print("Duplicados removidos com sucesso.")
     else:
         print("Opção inválida.")
 

@@ -4,12 +4,9 @@ import gc  # Importar o módulo gc para realizar a coleta de lixo
 
 # Função para carregar dados de um arquivo e retornar uma lista de strings
 def load_data_from_file(filename):
-    data = []
-    with open(filename, 'r', encoding='utf-8') as file:
-        for line in file:  
-            if ':' not in line:  # Verifica se a linha não contém dois pontos
-                data.append(line.strip())
-    return data 
+    with open(filename, "r", encoding="utf-8") as f:
+        data = [line.strip() for line in f]  # Lê cada linha do arquivo, remove espaços extras e adiciona à lista
+    return data
 
 # Função para salvar dados em um arquivo
 def save_data_to_file(data, filename):
@@ -78,25 +75,15 @@ def generate_test_data(num_combinations=100, batch_size=1000000):
 def remove_duplicates(filename):
     data = load_data_from_file(filename)  # Carrega dados do arquivo
     initial_lines = len(data)  # Número de linhas inicial
-    # Filtra as linhas que contêm dois pontos e as linhas sem dois pontos
-    data_with_colon = []
-    data_without_colon = []
-    for line in data:
-        if ':' in line:
-            data_with_colon.append(line)
-        else:
-            data_without_colon.append(line)
-    unique_data = list(set(data_with_colon))  # Remove duplicados usando um conjunto
+    unique_data = list(set(data))  # Remove duplicados usando um conjunto
     num_duplicates = initial_lines - len(unique_data)  # Calcula o número de duplicados
-    num_lines_removed = len(data_without_colon) + (initial_lines - len(data_with_colon))  # Calcula o número de linhas removidas sem :
     save_data_to_file(unique_data, filename)  # Salva os dados únicos no arquivo
     
     print("Informações sobre a remoção de duplicados:")
     print(f"Arquivo: {filename}")
     print(f"Quantidade inicial de linhas: {initial_lines}")
     print(f"Quantidade de linhas duplicadas: {num_duplicates}")
-    print(f"Quantidade de linhas sem dois pontos: {len(data_without_colon)}")
-    print(f"Quantidade de linhas removidas: {num_lines_removed}")
+    print(f"Quantidade de linhas removidas: {num_duplicates}")
     print(f"Nova quantidade de linhas: {len(unique_data)}")
 
 # Função para mostrar um menu e executar ações com base nas opções escolhidas

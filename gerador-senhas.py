@@ -55,7 +55,7 @@ def generate_test_data(num_combinations=100, batch_size=1000000):
     passwords = load_data_from_file("senhas.txt")
     names = load_data_from_file("nomes.txt")
     
-    with open("base_teste.txt", "a", encoding="utf-8") as f:
+    with open("base-gerada.txt", "a", encoding="utf-8") as f:
         for batch_num in range(num_combinations // batch_size):
             print(f"Gerando e salvando dados {batch_num + 1}/{num_combinations // batch_size}")
             batch_data = generate_test_data_batch(names, passwords, batch_size)
@@ -119,6 +119,8 @@ def separate_base_by_format(filename):
 
 # Função para mostrar um menu e executar ações com base nas opções escolhidas
 def main_menu():
+   while True: 
+    print("0. Sair")
     print("1. Gerar lista de dados de teste")
     print("2. Verificar e remover duplicados da lista de usuários")
     print("3. Verificar e remover duplicados da lista de senhas")
@@ -126,7 +128,11 @@ def main_menu():
     print("5. Separar a base por tipo de login")
     choice = input("Escolha uma opção: ")
     
-    if choice == "1":
+
+    if choice == "0":
+        print("SAINDO...")
+        break
+    elif choice == "1":
         num_combinations = int(input("Digite o número de combinações desejado: "))
         test_data = generate_test_data(num_combinations)
         print(f"Base de dados de teste gerada com {num_combinations * 2} combinações.")
@@ -139,10 +145,10 @@ def main_menu():
         remove_duplicates("senhas.txt")
         print("Duplicados removidos da lista de senhas com sucesso.")
     elif choice == "4":
-        remove_duplicates("base_teste.txt")
+        remove_duplicates("base-gerada.txt")
         print("Duplicados removidos do arquivo base com sucesso.")
     elif choice == "5":
-        separate_base_by_format("base_teste.txt")
+        separate_base_by_format("base-gerada.txt")
     else:
         print("Opção inválida.")
 

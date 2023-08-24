@@ -55,14 +55,13 @@ def generate_test_data(num_combinations=100, batch_size=1000000):
     passwords = load_data_from_file("senhas.txt")
     names = load_data_from_file("nomes.txt")
     
-    with open("base_teste.txt", "w", encoding="utf-8") as f:
+    with open("base_teste.txt", "a", encoding="utf-8") as f:
         for batch_num in range(num_combinations // batch_size):
             print(f"Gerando e salvando dados {batch_num + 1}/{num_combinations // batch_size}")
             batch_data = generate_test_data_batch(names, passwords, batch_size)
             for item in batch_data:
                 f.write("%s\n" % item)
-            
-            import gc
+                
             gc.collect()
         
         remaining_data = generate_test_data_batch(names, passwords, num_combinations % batch_size)
@@ -75,18 +74,24 @@ def generate_test_data(num_combinations=100, batch_size=1000000):
     
 # Função para remover duplicados de um arquivo
 def remove_duplicates(filename):
-    data = load_data_from_file(filename)  # Carrega dados do arquivo
+    with open(filename, "r", encoding="utf-8") as f:
+        data = [line.strip() for line in f]  # Lê cada linha do arquivo e adiciona à lista
+
     initial_lines = len(data)  # Número de linhas inicial
     unique_data = list(set(data))  # Remove duplicados usando um conjunto
     num_duplicates = initial_lines - len(unique_data)  # Calcula o número de duplicados
-    save_data_to_file(unique_data, filename)  # Salva os dados únicos no arquivo
-    
+
+    with open(filename, "w", encoding="utf-8") as f:
+        for item in unique_data:
+            f.write("%s\n" % item)  # Salva os dados únicos no arquivo
+
     print("Informações sobre a remoção de duplicados:")
     print(f"Arquivo: {filename}")
     print(f"Quantidade inicial de linhas: {initial_lines}")
     print(f"Quantidade de linhas duplicadas: {num_duplicates}")
     print(f"Quantidade de linhas removidas: {num_duplicates}")
     print(f"Nova quantidade de linhas: {len(unique_data)}")
+
 
 
 def separate_base_by_format(filename):
@@ -119,7 +124,6 @@ def main_menu():
     print("3. Verificar e remover duplicados da lista de senhas")
     print("4. Verificar e remover duplicados do arquivo base")
     print("5. Separar a base por tipo de login")
-    
     choice = input("Escolha uma opção: ")
     
     if choice == "1":
